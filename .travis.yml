@@ -3,13 +3,8 @@ compiler: gcc
 sudo: require
 dist: trusty
 
-before_install:
-  - sudo add-apt-repository ppa:beineri/opt-qt593-trusty -y
-  - sudo apt-get update -qq
-
 install:
   - sudo apt-get -y install g++ pkg-config libpng12-dev libreadline-dev libx11-dev libxext-dev libxi-dev libxft-dev libcups2-dev libimlib2-dev libfontconfig-dev libfreetype6-dev libssl-dev xutils-dev libcairo2-dev libharfbuzz-dev zlib1g-dev
-  - source /opt/qt*/bin/qt*-env.sh
 
 script:
   - git clone http://github.com/Laidout/laxkit.git laxkit
