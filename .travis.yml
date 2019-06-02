@@ -12,6 +12,7 @@ script:
   - ./configure
   - make -j$(nproc)
   - cd ..
+  - export CXXFLAGS='-std=c++11'
   - ./configure --laxkit=`pwd`/laxkit/lax --prefix=/usr --nogl --disable-sqlite
   - make -j$(nproc)
   - # TODO: Making the icons requires Inkscape(!); FIXME, see https://github.com/Laidout/laidout
