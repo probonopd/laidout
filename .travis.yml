@@ -4,18 +4,27 @@ sudo: require
 dist: xenial
 
 install:
-  - sudo apt-get -y install g++ pkg-config libpng12-dev libreadline-dev libx11-dev libxext-dev libxi-dev libxft-dev libcups2-dev libimlib2-dev libfontconfig-dev libfreetype6-dev libssl-dev xutils-dev libcairo2-dev libharfbuzz-dev zlib1g-dev inkscape libxrandr-dev
+  - sudo apt-get -y install g++ pkg-config libpng12-dev libreadline-dev libx11-dev libxext-dev libxi-dev libxft-dev libcups2-dev libimlib2-dev libfontconfig-dev libfreetype6-dev libssl-dev xutils-dev libcairo2-dev zlib1g-dev inkscape libxrandr-dev
 
 script:
+  - wget https://github.com/behdad/harfbuzz/releases/download/1.6.3/harfbuzz-1.6.3.tar.bz2
+  - tar xf harfbuzz-1.6.3.tar.bz2
+  - cd harfbuzz-1.6.3
+  - ./configure --prefix=/usr --disable-dependency-tracking --disable-static --with-glib=no --with-gobject=no --with-cairo=no --with-fontconfig=no --with-icu=no --with-directwrite=no --with-freetype=yes
+  - make -j2
+  - sudo make install
+  - cd ..
+  # laxkit
   - git clone http://github.com/Laidout/laxkit.git laxkit
   - cd laxkit
   - ./configure
   - make -j$(nproc)
   - cd ..
+  # Laidout
   - export CXXFLAGS='-std=c++11'
   - ./configure --laxkit=`pwd`/laxkit/lax --prefix=/usr --nogl --disable-sqlite
   - make -j$(nproc)
-  - # TODO: Making the icons requires Inkscape(!); FIXME, see https://github.com/Laidout/laidout
+  # TODO: Making the icons requires Inkscape(!); FIXME, see https://github.com/Laidout/laidout
   - make install DESTDIR=$(readlink -f appdir) ; find appdir/
   - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
   - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
