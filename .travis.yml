@@ -4,7 +4,7 @@ sudo: require
 dist: xenial
 
 install:
-  - sudo apt-get -y install g++ pkg-config libpng12-dev libreadline-dev libx11-dev libxext-dev libxi-dev libxft-dev libcups2-dev libimlib2-dev libfontconfig-dev libfreetype6-dev libssl-dev xutils-dev libcairo2-dev libharfbuzz-dev zlib1g-dev inkscape
+  - sudo apt-get -y install g++ pkg-config libpng12-dev libreadline-dev libx11-dev libxext-dev libxi-dev libxft-dev libcups2-dev libimlib2-dev libfontconfig-dev libfreetype6-dev libssl-dev xutils-dev libcairo2-dev libharfbuzz-dev zlib1g-dev inkscape libxrandr-dev
 
 script:
   - git clone http://github.com/Laidout/laxkit.git laxkit
