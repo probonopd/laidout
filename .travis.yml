@@ -20,11 +20,11 @@ script:
   # laxkit
   - git clone http://github.com/Laidout/laxkit.git laxkit
   - cd laxkit
-  - ./configure
+  - ./configure --disable-sqlite
   - make -j$(nproc)
   - cd ..
   # Laidout
-  - ./configure --laxkit=`pwd`/laxkit/lax --prefix=/usr --nogl --disable-sqlite --force
+  - ./configure --laxkit=`pwd`/laxkit/lax --prefix=/usr --nogl --disable-sqlite --force --gegl-version=gegl-0.3
   - make -j$(nproc)
   # TODO: Making the icons requires Inkscape(!); FIXME, see https://github.com/Laidout/laidout
   - make install DESTDIR=$(readlink -f appdir) ; find appdir/
