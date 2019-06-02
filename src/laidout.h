@@ -20,11 +20,11 @@
 #include <lax/errorlog.h>
 #include <lax/resources.h>
 
-#include "laidoutprefs.h"
-#include "papersizes.h"
-#include "document.h"
-#include "project.h"
-#include "interfaces.h"
+#include "core/laidoutprefs.h"
+#include "core/papersizes.h"
+#include "core/document.h"
+#include "core/project.h"
+#include "ui/interfaces.h"
 #include "calculator/calculator.h"
 #include "impositions/imposition.h"
 #include "filetypes/filefilters.h"
@@ -112,6 +112,7 @@ class LaidoutApp : public Laxkit::anXApp, public Value, public Laxkit::EventRece
 	char *icon_dir;
 	Laxkit::IconManager *icons;
 
+	ValueHash globals;
 	unsigned long curcolor;
 	
 	char preview_transient;

@@ -20,11 +20,11 @@
 
 #include "../language.h"
 #include "../laidout.h"
-#include "../stylemanager.h"
-#include "../headwindow.h"
+#include "../core/stylemanager.h"
+#include "../ui/headwindow.h"
 #include "../impositions/singles.h"
-#include "../utils.h"
-#include "../drawdata.h"
+#include "../core/utils.h"
+#include "../core/drawdata.h"
 #include "../printing/psout.h"
 #include "../dataobjects/epsdata.h"
 #include "../dataobjects/mysterydata.h"
@@ -636,7 +636,7 @@ int PptinFilter::pptDumpInGroup(Attribute *att, Group *group)
 		if (!t) continue; //missing a type
 
 		if (!strcmp(t->value,"raster")) {
-			img=load_image(a->value);
+			img = ImageLoader::LoadImage(a->value);
 			if (img) {
 				image=new ImageData;
 				if (n) image->SetDescription(n->value);

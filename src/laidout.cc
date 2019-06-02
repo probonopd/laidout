@@ -36,22 +36,22 @@
 #include <sys/file.h>
 
 #define LAIDOUT_CC
-#include "language.h"
-#include "laidout.h"
-#include "viewwindow.h"
-#include "impositions/singles.h"
-#include "impositions/netimposition.h"
-#include "impositions/impositioneditor.h"
-#include "interfaces/nodeeditor.h"
-#include "headwindow.h"
-#include "version.h"
-#include "stylemanager.h"
-#include "configured.h"
-#include "printing/epsutils.h"
-#include "filetypes/filters.h"
-#include "utils.h"
 #include "api/functions.h"
-#include "newdoc.h"
+#include "configured.h"
+#include "core/stylemanager.h"
+#include "core/utils.h"
+#include "filetypes/filters.h"
+#include "impositions/impositioneditor.h"
+#include "impositions/netimposition.h"
+#include "impositions/singles.h"
+#include "nodes/nodeeditor.h"
+#include "printing/epsutils.h"
+#include "ui/headwindow.h"
+#include "ui/newdoc.h"
+#include "ui/viewwindow.h"
+#include "version.h"
+#include "laidout.h"
+#include "language.h"
 
 
 //template implementations
@@ -97,8 +97,8 @@ const char *LaidoutVersion()
 		const char *outstr=
 						_("Laidout Version %s\n"
 						  "http://www.laidout.org\n"
-						  "by Tom Lechner, sometime between 2006 and 2017\n"
-						  "Released under the GNU Public License, Version 2.\n"
+						  "by Tom Lechner, sometime between 2006 and 2019\n"
+						  "Released under the GNU Public License, Version 3.\n"
 						  " (using Laxkit Version %s)");
 		version_str=new char[1+strlen(outstr)+strlen(LAIDOUT_VERSION)+strlen(LAXKIT_VERSION)];
 		sprintf(version_str,outstr,LAIDOUT_VERSION,LAXKIT_VERSION);
@@ -122,7 +122,8 @@ const char *LaidoutVersion()
  */
 int laidout_preview_maker(const char *original, const char *preview, const char *format, int width, int height, int fit)
 {
-	if (!generate_preview_image(original,preview,format,width,height,fit)) return 0;
+	// *** need to wrap eps handling into something else...
+	if (!GeneratePreviewFile(original,preview,format,width,height,fit)) return 0;
 
 	 //normal preview maker didn't work, so try something else...
 	DoubleBBox bbox;
@@ -141,18 +142,6 @@ int laidout_preview_maker(const char *original, const char *preview, const char 
 						 NULL);
 }
 
-
-
-
-
-//----------------------- Main Control Panel: an unmapped window until further notice? -------------------------------
-
-//class ControlPanel : public Laxkit::anXWindow
-//{
-// public:
-//	virtual int DataEvent(EventData *data,const char *mes); 
-//	virtual int ClientEvent(XClientMessageEvent *e,const char *mes);
-//};
 
 
 
@@ -229,6 +218,7 @@ int laidout_preview_maker(const char *original, const char *preview, const char 
  * \brief The file size in kilobytes over which preview images should be used where possible.
  */
 
+ColorManager *colorManager = nullptr;
 
 //! Laidout constructor, just inits a few variables to 0.
 /*! 
@@ -237,16 +227,19 @@ LaidoutApp::LaidoutApp()
   : anXApp(),
 	preview_file_bases(2)
 {	
+	colorManager = new ColorManager();
+	colorManager->AddSystem(Create_sRGB_System(true), true);
+	ColorManager::SetDefault(colorManager);
+	//colorManager->dec_count();
+
+
 	autosave_timerid=0;
 	
 	icons=IconManager::GetDefault();
 
 	runmode=RUNMODE_Normal;
 
-	config_dir=newstr(getenv("HOME"));
-	appendstr(config_dir,"/.config/laidout/");
-	appendstr(config_dir,LAIDOUT_VERSION);
-	appendstr(config_dir,"/");
+	config_dir = ConfigDir();
 
 	makestr(controlfontstr,"sans-15");
 
@@ -769,6 +762,11 @@ int LaidoutApp::createlaidoutrc()
 					  "\n"
 					  "\n"
 
+					   //enable experimental
+					  "## Uncomment to enable any features that are experimental.\n"
+					  "#experimental\n"
+					  "\n"
+
 					   //shortcuts
 					  " #By default when you modify shortcuts in Laidout, they are saved in ./shortcuts.\n"
 					  " #Listing another file here will load keys from that file first, THEN the ./shortcuts will\n"
@@ -809,12 +807,6 @@ int LaidoutApp::createlaidoutrc()
 					  "#defaultunits inches\n"
 					  "\n"
 
-					   //colors
-					  "#colors (***TODO)\n"
-					  "#  activate   rgbf  0 .78  0    #Some controls have green/red to indicate go/no-go. Redefine here\n"
-					  "#  deactivate rgbf  1 .39 .39   # for instance, to compensate for red/green color blindness.\n"
-					  "\n"
-
 					   //default paper
 					  "#defaultpapersize letter #Name of default paper to use\n"
 					  "\n"
@@ -835,6 +827,12 @@ int LaidoutApp::createlaidoutrc()
 			fprintf(f,"#palette_dir /usr/share/gimp/2.0/palettes\n"
 					  "\n");
 
+
+					   ////colors
+					  //"#colors (***ToDO)\n"
+					  //"#  activate   rgbf  0 .78  0    #Some controls have green/red to indicate go/no-go. Redefine here\n"
+					  //"#  deactivate rgbf  1 .39 .39   # for instance, to compensate for red/green color blindness.\n"
+					  //"\n"
 
 			fprintf(f,"laxprofile Light #Default built in profiles are Dark, Light, and Gray. You can define others in the laxconfig section.\n");
 			fprintf(f,"laxconfig-sample #Remove the \"-sample\" part to redefine various default window behaviour settingss\n");
@@ -948,13 +946,24 @@ int LaidoutApp::readinLaidoutDefaults()
 			dump_in_rc(att.attributes.e[c],NULL);
 
 		} else if (!strcmp(name,"laxprofile")) {
-			makestr(app_profile,value);
-			if (!strcmp(value,"Dark")) setupdefaultcolors();
+			if (value) {
+				makestr(app_profile,value);
+				if (!strcmp(value,"Dark") || !strcmp(value,"Gray") || !strcmp(value,"Light"))
+					setupdefaultcolors();
+			}
 			
-		} else if (!strcmp(name,"laxcolors")) {
-			//*** this, or force use of laxconfig?
-			dump_in_colors(att.attributes.e[c]);
+		//} else if (!strcmp(name,"laxcolors")) {
+		//	//*** this, or force use of laxconfig?
+		//	dump_in_colors(att.attributes.e[c]);
 			
+		} else if (!strcmp(name,"theme")) {
+			if (isblank(app_profile) || (!isblank(app_profile) && value && !strcmp(app_profile, value))) {
+				Theme *thme = new Theme(app_profile);
+				thme->dump_in_atts(att.attributes.e[c], 0, NULL);
+				if (theme) theme->dec_count();
+				theme = thme;
+			}
+
 		} else if (!strcmp(name,"shortcuts")) {
 			foundkeys=1;
 			InitializeShortcuts();
@@ -1017,7 +1026,7 @@ int LaidoutApp::readinLaidoutDefaults()
 			if (value) {
 				int id=0;
 				UnitManager *units=GetUnitManager();
-				if (units->UnitInfo(value,&id,NULL,NULL,NULL,NULL)==0) {
+				if (units->UnitInfo(value,&id,NULL,NULL,NULL,NULL,NULL)==0) {
 					makestr(prefs.unitname,value);
 					prefs.default_units=id;
 					units->DefaultUnits(value);
@@ -1157,6 +1166,10 @@ int LaidoutApp::InitializePlugins()
 					n++;
 				}
 			}
+			if (ColorManager::GetDefault(false) == nullptr) {
+				cerr << " *** ColorManager wiped after dlopen!! This shouldn't happen!!!!! Aaaaaaagh!!"<<endl;
+				ColorManager::SetDefault(colorManager);
+			}
 		}
 		globfree(&globbuf);
 	}
@@ -1229,8 +1242,8 @@ void InitOptions()
 	options.Add("new",                'n', 1, "Create new document",                         0, "\"letter,portrait,3pgs\"");
 	options.Add("file-format",        'F', 0, "Print out a pseudocode mockup of the file format, then exit",0,NULL);
 	options.Add("command",            'c', 1, "Run one or more commands without the gui",    0, "\"newdoc net\"");
-	options.Add("script",             'C', 1, "Like --command, but the commands are in the given file",     0, "/some/file");
-	options.Add("shell",              'P', 0, "Enter a command line shell. Can be used with --command and --script.", 0, NULL);
+	options.Add("script",             's', 1, "Like --command, but the commands are in the given file",     0, "/some/file");
+	options.Add("shell",              'L', 0, "Enter a command line shell. Can be used with --command and --script.", 0, NULL);
 	options.Add("default-units",      'u', 1, "Use the specified units.",                    0, "(in|cm|mm|m|ft|yards)");
 	options.Add("load-dir",           'l', 1, "Start in this directory.",                    0, "path");
 	options.Add("experimental",       'E', 0, "Enable any compiled in experimental features",0, NULL);
@@ -1285,7 +1298,7 @@ void LaidoutApp::parseargs(int argc,char **argv)
 					LoadTemplate(o->arg(),log);
 				} break;
 
-			case 'C': { // --shell
+			case 'L': { // --shell
 					donotusex=2;
 					runmode=RUNMODE_Shell;
 				} break;
@@ -1420,7 +1433,7 @@ void LaidoutApp::parseargs(int argc,char **argv)
 			case 'u': { // default units
 					UnitManager *units=GetUnitManager();
 					int id=0;
-					if (units->UnitInfo(o->arg(),&id,NULL,NULL,NULL,NULL)==0) {
+					if (units->UnitInfo(o->arg(),&id,NULL,NULL,NULL,NULL,NULL)==0) {
 						makestr(prefs.unitname,o->arg());
 						prefs.default_units=id;
 						units->DefaultUnits(prefs.unitname);
@@ -1524,8 +1537,12 @@ void LaidoutApp::parseargs(int argc,char **argv)
 
 	for (o=options.remaining(); o; o=options.next()) {
 		DBG cerr <<"----Read in:  "<<o->arg()<<endl;
-		doc=NULL;
-		if (Load(o->arg(),log)==0) doc=curdoc;
+		doc = NULL;
+		if (Load(o->arg(),log)==0) doc = curdoc;
+		else {
+			generallog.AddError(0,0,0, _("Could not load %s!"), o->arg());
+		}
+
 		if (topwindows.n == index) {
 			if (!doc && project->docs.n) doc = project->docs.e[0]->doc;
 			if (doc && runmode==RUNMODE_Normal) addwindow(newHeadWindow(doc));
@@ -1677,7 +1694,7 @@ char *LaidoutApp::full_path_for_resource(const char *name,const char *dir)//dir=
 		convert_to_full_path(fullname,NULL);
 		if (readable_file(fullname)) return fullname;
 
-		cout <<" *** need to implement full_path_for_resource() name search!"<<endl;
+		DBG cerr <<" *** need to fully implement full_path_for_resource() name search!"<<endl;
 	}
 	delete[] fullname;//***
 	fullname=NULL;//***
@@ -2150,10 +2167,10 @@ int main(int argc,char **argv)
 
 
 	 //redefine Laxkit's default preview maker
-	generate_preview_image=laidout_preview_maker;
+	//generate_preview_image = laidout_preview_maker;
 
 	laidout=new LaidoutApp();
-	if (theme) laidout->Theme(theme);
+	if (theme) laidout->SetTheme(theme);
 	if (backend) laidout->Backend(backend);
 	o=options.find("experimental",0);
 	if (o && o->parsed_present) laidout->experimental=1;

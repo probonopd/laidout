@@ -14,15 +14,16 @@
 //
 
 
-// This file is for LaidoutApp functions that are not really involved in basic application functioning,
-// or initial window creation.
+// This file is for TreeChangeEvent implementation, and some LaidoutApp functions that 
+// are here for poorly defined reasons.
+
 
 #include "laidout.h"
-#include "viewwindow.h"
-#include "spreadeditor.h"
-#include "headwindow.h"
+#include "ui/viewwindow.h"
+#include "ui/spreadeditor.h"
+#include "ui/headwindow.h"
 #include "version.h"
-#include "importimage.h"
+#include "core/importimage.h"
 
 #ifndef LAIDOUT_NOGL
 #include "impositions/polyptychwindow.h"
