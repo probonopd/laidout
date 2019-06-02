@@ -24,7 +24,7 @@ script:
   - make -j$(nproc)
   - cd ..
   # Laidout
-  - ./configure --laxkit=`pwd`/laxkit/lax --prefix=/usr --nogl --disable-sqlite
+  - ./configure --laxkit=`pwd`/laxkit/lax --prefix=/usr --nogl --disable-sqlite --force
   - make -j$(nproc)
   # TODO: Making the icons requires Inkscape(!); FIXME, see https://github.com/Laidout/laidout
   - make install DESTDIR=$(readlink -f appdir) ; find appdir/
