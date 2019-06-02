@@ -9,7 +9,7 @@ install:
 script:
   - export CXXFLAGS='-std=c++11'
   # Harfbuzz
-  - wget https://github.com/behdad/harfbuzz/releases/download/1.6.3/harfbuzz-2.2.0.tar.bz2
+  - wget https://github.com/behdad/harfbuzz/releases/download/2.2.0/harfbuzz-2.2.0.tar.bz2
   - tar xf harfbuzz-2.2.0.tar.bz2
   - cd harfbuzz-2.2.0
   - ./configure --prefix=/usr --disable-dependency-tracking --disable-static --with-glib=no --with-gobject=no --with-cairo=no --with-fontconfig=no --with-icu=no --with-directwrite=no --with-freetype=yes
