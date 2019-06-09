@@ -26,7 +26,7 @@ script:
   - ./configure --laxkit=`pwd`/laxkit/lax --prefix=/usr --nogl --disable-sqlite --force --gegl-version=gegl-0.3
   - make -j$(nproc)
   # TODO: Making the icons requires Inkscape(!); FIXME, see https://github.com/Laidout/laidout
-  - make install DESTDIR=$(readlink -f appdir) ; find appdir/
+  - sudo make install DESTDIR=$(readlink -f appdir) ; find appdir/
   - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
   - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
   - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage
