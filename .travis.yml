@@ -23,7 +23,8 @@ script:
   - ./configure --disable-sqlite
   - make -j$(nproc)
   # Laidout
-  - ./configure --laxkit=`pwd`/laxkit/lax --prefix=/usr --nogl --disable-sqlite --force --gegl-version=gegl-0.3
+  - mkdir -p appdir
+  - ./configure --finalprefix=$(readlink -f appdir) --laxkit=`pwd`/laxkit/lax --prefix=/usr --nogl --disable-sqlite --force --gegl-version=gegl-0.3
   - make -j$(nproc)
   # TODO: Making the icons requires Inkscape(!); FIXME, see https://github.com/Laidout/laidout
   - sudo make install DESTDIR=$(readlink -f appdir) ; find appdir/
