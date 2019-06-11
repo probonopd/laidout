@@ -22,6 +22,7 @@ script:
   - cd laxkit
   - ./configure --disable-sqlite
   - make -j$(nproc)
+  - cd ..
   # Laidout
   - mkdir -p appdir
   - ./configure --prefix=`pwd`/appdir --laxkit=`pwd`/laxkit/lax --nogl --disable-sqlite --force --gegl-version=gegl-0.3
