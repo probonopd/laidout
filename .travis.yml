@@ -5,6 +5,8 @@ dist: xenial
 
 install:
   - sudo apt-get -y install g++ inkscape libgegl-dev libcairo2-dev libcairo2-dev libcups2-dev libfontconfig-dev libfreetype6-dev libftgl-dev libglu1-mesa-dev libgraphicsmagick++1-dev libimlib2-dev libpng12-dev libreadline-dev libssl-dev libx11-dev libxext-dev libxft-dev libxi-dev libxrandr-dev mesa-common-dev pkg-config xutils-dev zlib1g-dev
+  - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc # Needed for std=c++11?
+  - sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-5 /usr/bin/g++ # Needed for std=c++11?
 
 script:
   - export CXXFLAGS='-std=c++11'
