@@ -27,7 +27,7 @@ script:
   - cd ..
   # Laidout
   - mkdir -p appdir
-  - ./configure --prefix=`pwd`/usr --laxkit=`pwd`/laxkit/lax --nogl --disable-sqlite --force --gegl-version=gegl-0.3
+  - ./configure --prefix=`pwd`/appdir/usr --laxkit=`pwd`/laxkit/lax --nogl --disable-sqlite --force --gegl-version=gegl-0.3
   - make -j$(nproc)
   # TODO: Making the icons requires Inkscape(!); FIXME, see https://github.com/Laidout/laidout
   - sudo make install ; find appdir/
