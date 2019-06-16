@@ -40,7 +40,47 @@ script:
   - find appdir/
   - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
   - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
-  - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage -executable=$(readlink -f appdir/usr/share/laidout/*/plugins/geglnodes.so)
+  - | 
+    ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage \
+    -executable=$(readlink -f appdir/usr/share/laidout/*/plugins/geglnodes.so) \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/exr-save.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/ff-load.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/ff-save.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/gegl-common-cxx.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/gegl-common-gpl3.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/gegl-common.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/gegl-core.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/gegl-generated.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/gif-load.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/jpg-load.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/jpg-save.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/lcms-from-profile.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/matting-levin.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/npd.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/npy-save.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/path.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/pdf-load.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/pixbuf.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/png-load.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/png-save.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/ppm-load.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/ppm-save.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/raw-load.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/rgbe-load.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/rgbe-save.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/save-pixbuf.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/sdl-display.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/seamless-clone-compose.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/seamless-clone.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/svg-load.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/text.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/tiff-load.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/tiff-save.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/transformops.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/vector-fill.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/vector-stroke.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/webp-load.so \
+    -executable=appdir/usr/lib/x86_64-linux-gnu/gegl-0.4/webp-save.so
 
 after_success:
   - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
