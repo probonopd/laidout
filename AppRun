@@ -1,0 +1,6 @@
+#!/bin/bash
+DIR="`dirname \"$0\"`" 
+DIR="`( cd \"$DIR\" && readlink -f $(pwd) )`"
+export BABL_PATH=$(readlink -f "$DIR/usr/lib/babl-0.1")
+export GEGL_PATH=$(readlink -f "$DIR/usr/lib/gegl-0.4")
+PATH="$DIR/usr/bin" exec laidout "$@"
