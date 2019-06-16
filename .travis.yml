@@ -42,7 +42,7 @@ script:
   - mkdir -p appdir/usr/share/icons/hicolor/scalable/apps/ ; cp src/icons/laidout.svg appdir/usr/share/icons/hicolor/scalable/apps/ # FIXME: make install should do this
   - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
   - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
-  - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage -binary=$(readlink -f appdir/usr/share/laidout/*/plugins/geglnodes.so)
+  - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage -executable=$(readlink -f appdir/usr/share/laidout/*/plugins/geglnodes.so)
 
 after_success:
   - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
