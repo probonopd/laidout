@@ -25,7 +25,14 @@ script:
   - ./configure --disable-sqlite --relocatable
   - make -j$(nproc)
   - cd ..
-  # Laidout
+  # Laidout icons (requires Inkscape)
+  - cd src/icons
+  - make
+  - cd ../../laxkit/lax/icons
+  - make
+  - cd ../../..
+  - cp laxkit/lax/icons/*png src/icons
+  # Laidout 
   - mkdir -p appdir
   - ./configure --prefix=`pwd`/appdir/usr --relocatable --laxkit=`pwd`/laxkit/lax --nogl --disable-sqlite --force --gegl-version=gegl-0.3
   - make -j$(nproc)
