@@ -38,7 +38,6 @@ script:
   - make -j$(nproc)
   # TODO: Making the icons requires Inkscape(!); FIXME, see https://github.com/Laidout/laidout
   - make install ; find appdir/
-  - mv appdir/usr/bin/laidout* appdir/usr/bin/laidout # desktop file expects it there
   - mkdir -p appdir/usr/share/applications/ ; cp deb/laidout.desktop appdir/usr/share/applications/ # FIXME: make install should do this
   - mkdir -p appdir/usr/share/icons/hicolor/scalable/apps/ ; cp src/icons/laidout.svg appdir/usr/share/icons/hicolor/scalable/apps/ # FIXME: make install should do this
   - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
