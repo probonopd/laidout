@@ -22,12 +22,12 @@ script:
   # laxkit
   - git clone http://github.com/Laidout/laxkit.git laxkit
   - cd laxkit
-  - ./configure --disable-sqlite
+  - ./configure --disable-sqlite --relocatable
   - make -j$(nproc)
   - cd ..
   # Laidout
   - mkdir -p appdir
-  - ./configure --prefix=`pwd`/appdir/usr --laxkit=`pwd`/laxkit/lax --nogl --disable-sqlite --force --gegl-version=gegl-0.3
+  - ./configure --prefix=`pwd`/appdir/usr --relocatable --laxkit=`pwd`/laxkit/lax --nogl --disable-sqlite --force --gegl-version=gegl-0.3
   - make -j$(nproc)
   # TODO: Making the icons requires Inkscape(!); FIXME, see https://github.com/Laidout/laidout
   - make install ; find appdir/
