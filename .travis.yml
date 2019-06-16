@@ -25,18 +25,13 @@ script:
   - ./configure --disable-sqlite --relocatable
   - make -j$(nproc)
   - cd ..
-  # Laidout icons (requires Inkscape)
-  - cd src/icons
-  - make
-  - cd ../../laxkit/lax/icons
-  - make
-  - cd ../../..
-  - cp laxkit/lax/icons/*png src/icons
   # Laidout 
   - mkdir -p appdir
   - ./configure --prefix=`pwd`/appdir/usr --relocatable --laxkit=`pwd`/laxkit/lax --nogl --disable-sqlite --force --gegl-version=gegl-0.3
   - make -j$(nproc)
   # TODO: Making the icons requires Inkscape(!); FIXME, see https://github.com/Laidout/laidout
+  - git clone https://github.com/Laidout/laidout-icons
+  - cp laidout-icons/target-24/* src/icons
   - make install ; find appdir/
   - mkdir -p appdir/usr/share/applications/ ; cp deb/laidout.desktop appdir/usr/share/applications/ # FIXME: make install should do this
   - mkdir -p appdir/usr/share/icons/hicolor/scalable/apps/ ; cp src/icons/laidout.svg appdir/usr/share/icons/hicolor/scalable/apps/ # FIXME: make install should do this
